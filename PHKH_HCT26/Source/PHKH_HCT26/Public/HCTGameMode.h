@@ -13,4 +13,9 @@ UCLASS()
 class PHKH_HCT26_API AHCTGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+	
+public:
+	AHCTGameMode();
+	
+	virtual void BeginPlay() override;
 };

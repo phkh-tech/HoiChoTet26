@@ -13,4 +13,9 @@ UCLASS()
 class PHKH_HCT26_API AHCTPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+	
+	AHCTPlayerController();
+	
+public:
+	void BeginPlay();
 };

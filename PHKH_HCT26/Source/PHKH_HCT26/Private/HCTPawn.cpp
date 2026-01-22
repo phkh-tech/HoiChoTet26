@@ -16,6 +16,8 @@ void AHCTPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	UE_LOG(LogTemp, Warning, TEXT("Start HCTPawn"));
+	
 }
 
 // Called every frame
