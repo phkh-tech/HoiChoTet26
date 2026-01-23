@@ -3,6 +3,8 @@
 
 #include "PHKH_HCT26/Public/HCTGameMode.h"
 
+#include "PHKH_HCT26/PHKH_HCT26.h"
+
 AHCTGameMode::AHCTGameMode()
 {
 }
@@ -11,5 +13,5 @@ void AHCTGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Start Game Mode"));
+	UE_LOG(LOGHCT2026, Warning, TEXT("Start Game Mode"));
 }

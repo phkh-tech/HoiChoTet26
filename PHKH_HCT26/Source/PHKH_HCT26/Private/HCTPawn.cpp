@@ -3,6 +3,8 @@
 
 #include "PHKH_HCT26/Public/HCTPawn.h"
 
+#include "PHKH_HCT26/PHKH_HCT26.h"
+
 
 // Sets default values
 AHCTPawn::AHCTPawn()
@@ -16,7 +18,7 @@ void AHCTPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Start HCTPawn"));
+	UE_LOG(LOGHCT2026, Warning, TEXT("Start HCTPawn"));
 	
 }
 

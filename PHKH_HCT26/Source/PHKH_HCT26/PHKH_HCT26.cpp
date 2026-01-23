@@ -4,3 +4,5 @@
 #include "Modules/ModuleManager.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, PHKH_HCT26, "PHKH_HCT26" );
+
+DEFINE_LOG_CATEGORY(LOGHCT2026);

@@ -3,6 +3,8 @@
 
 #include "PHKH_HCT26/Public/HCTPlayerController.h"
 
+#include "PHKH_HCT26/PHKH_HCT26.h"
+
 AHCTPlayerController::AHCTPlayerController()
 {
 }
@@ -10,5 +12,5 @@ AHCTPlayerController::AHCTPlayerController()
 void AHCTPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("Start HCTPlayerController"));
+	UE_LOG(LOGHCT2026, Warning, TEXT("Start HCTPlayerController"));
 }
