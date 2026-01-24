@@ -18,7 +18,7 @@ void AHCTPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LOGHCT2026, Warning, TEXT("Start HCTPawn"));
+	UE_LOG(LogHCT2026, Warning, TEXT("Start HCTPawn"));
 	
 }
 

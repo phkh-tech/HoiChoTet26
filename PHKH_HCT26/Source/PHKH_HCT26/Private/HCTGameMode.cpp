@@ -13,5 +13,5 @@ void AHCTGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LOGHCT2026, Warning, TEXT("Start Game Mode"));
+	UE_LOG(LogHCT2026, Warning, TEXT("Start Game Mode"));
 }

@@ -12,5 +12,5 @@ AHCTPlayerController::AHCTPlayerController()
 void AHCTPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LOGHCT2026, Warning, TEXT("Start HCTPlayerController"));
+	UE_LOG(LogHCT2026, Warning, TEXT("Start HCTPlayerController"));
 }

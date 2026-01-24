@@ -15,17 +15,20 @@ void AHCT_HUD::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LOGHCT2026, Warning, TEXT("Start HCT_HUD"));
-
+	UE_LOG(LogHCT2026, Warning, TEXT("Start HCT_HUD"));
 
 	if (WBP_HCT26)
 	{
 		if (UWorld* World = GetWorld())
 		{
-			HUDWidgetInstance = CreateWidget<UUserWidget>(World, WBP_HCT26);
+			//HUDWidgetInstance = CreateWidget<UUserWidget>(World, WBP_HCT26);
 			if (HUDWidgetInstance)
 			{
 				HUDWidgetInstance->AddToViewport();
+			}
+			else
+			{
+				UE_LOG(LogNullPointer, Warning, TEXT("HUDWidgetInstance is null"));
 			}
 		}
 	}

@@ -19,7 +19,6 @@ class PHKH_HCT26_API AHCT_HUD : public AHUD
 public:
 	virtual void BeginPlay() override;
 	
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI HCT 2026")
 	TSubclassOf<UUserWidget> WBP_HCT26;
 
