@@ -3,9 +3,9 @@
 
 #include "PHKH_HCT26/Public/HCTPlayerController.h"
 #include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "PHKH_HCT26/PHKH_HCT26.h"
 #include "InputMappingContext.h"
+#include "EnhancedInputSubsystems.h"
 #include "Engine/Engine.h"
 
 
@@ -17,18 +17,17 @@ void AHCTPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	check(GEngine != nullptr);
-	SavedPawn = GetPawn();
-	if (SavedPawn)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PCHoiChoTet: Saved pawn %s for re-possession."), *SavedPawn->GetName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PCHoiChoTet: No pawn to save at BeginPlay."));
-	}
 	
 	UE_LOG(LogHCT2026, Warning, TEXT("Start HCTPlayerController"));
-	
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+	ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		if (PossessMappingContext)
+		{
+			Subsystem->AddMappingContext(PossessMappingContext, 0);
+		}
+	}
+	PossesNearestPawns();
 }
 
 void AHCTPlayerController::SetupInputComponent()
@@ -76,3 +75,17 @@ void AHCTPlayerController::Look(const FInputActionValue& Value)
 		CurrentPawn->AddControllerPitchInput(LookAxis.Y);
 	}
 }
+
+void AHCTPlayerController::PossesNearestPawns() const
+{
+	TArray<AHCTPawn*> PossessablePawns;
+	PossessablePawns.Empty();
+	
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GatherPossessablePawns: World is null."));
+		return;
+	}
+}
+

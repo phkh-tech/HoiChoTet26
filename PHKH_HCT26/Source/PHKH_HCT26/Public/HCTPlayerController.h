@@ -4,6 +4,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HCTPawn.h"
 #include "InputActionValue.h" 
 #include "GameFramework/PlayerController.h"
 #include "HCTPlayerController.generated.h"
@@ -22,12 +23,16 @@ class PHKH_HCT26_API AHCTPlayerController : public APlayerController
 	AHCTPlayerController();
 	
 public:
-	void SetupInputComponent() override;
+	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 	
 protected:
-	void BeginPlay();
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	
+	UFUNCTION()
+	void PossesNearestPawns() const;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
 	UInputAction* MoveAction;
@@ -35,9 +40,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
 	UInputAction* LookAction;
 	
-private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
+	UInputMappingContext* PossessMappingContext;
 	
-	UPROPERTY()
-	APawn* SavedPawn = nullptr;
 	
 };
