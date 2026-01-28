@@ -17,5 +17,6 @@ class PHKH_HCT26_API AHCTGameMode : public AGameModeBase
 public:
 	AHCTGameMode();
 	
+protected:
 	virtual void BeginPlay() override;
 };

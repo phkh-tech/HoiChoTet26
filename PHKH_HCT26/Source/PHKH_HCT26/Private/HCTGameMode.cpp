@@ -2,11 +2,12 @@
 
 
 #include "PHKH_HCT26/Public/HCTGameMode.h"
-
+#include "HCTPawn.h"
 #include "PHKH_HCT26/PHKH_HCT26.h"
 
 AHCTGameMode::AHCTGameMode()
 {
+	DefaultPawnClass = AHCTPawn::StaticClass();
 }
 
 void AHCTGameMode::BeginPlay()

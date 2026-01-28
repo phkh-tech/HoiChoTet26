@@ -2,8 +2,10 @@
 
 
 #include "PHKH_HCT26/Public/HCTPawn.h"
-
+#include "EnhancedInputComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "PHKH_HCT26/PHKH_HCT26.h"
+
 
 
 // Sets default values
@@ -11,6 +13,10 @@ AHCTPawn::AHCTPawn()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
+	MovementComponent->UpdatedComponent = RootComponent;
+
 }
 
 // Called when the game starts or when spawned
@@ -33,4 +39,6 @@ void AHCTPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
+
+
 

@@ -13,8 +13,7 @@ UCLASS()
 class PHKH_HCT26_API AHCT_HUD : public AHUD
 {
 	GENERATED_BODY()
-	
-	AHCT_HUD();
+  
 	
 public:
 	virtual void BeginPlay() override;

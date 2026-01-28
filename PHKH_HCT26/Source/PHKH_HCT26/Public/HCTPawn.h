@@ -6,6 +6,10 @@
 #include "GameFramework/Pawn.h"
 #include "HCTPawn.generated.h"
 
+
+class UInputAction;
+class UFloatingPawnMovement;
+
 UCLASS()
 class PHKH_HCT26_API AHCTPawn : public APawn
 {
@@ -18,6 +22,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(VisibleAnywhere)
+	UFloatingPawnMovement* MovementComponent;
+
 
 public:
 	// Called every frame
