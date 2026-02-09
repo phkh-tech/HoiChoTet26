@@ -4,6 +4,7 @@
 #include "PHKH_HCT26/Public/HCTPawn.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PHKH_HCT26/PHKH_HCT26.h"
+#include "Components/SphereComponent.h"
 
 
 UE_DEFINE_GAMEPLAY_TAG(Possession, "Possession");
@@ -14,14 +15,19 @@ AHCTPawn::AHCTPawn()
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	
-	PawnMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PawnMesh"));
-	RootComponent = PawnMesh;
-	
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
 	MovementComponent->UpdatedComponent = RootComponent;
 	
 	GamePlayTag.AddTag(Possession);
+	
+	// Create collision component as root
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComponent"));
+	SetRootComponent(CollisionComponent);
+	CollisionComponent->InitSphereRadius(50.0f);
+	CollisionComponent->SetCollisionProfileName(TEXT("Pawn")); // or CollisionComponent->SetCollisionObjectType(ECC_Pawn);
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	CollisionComponent->SetGenerateOverlapEvents(true);
 
 }
 
@@ -32,10 +38,6 @@ void AHCTPawn::BeginPlay()
 	
 	UE_LOG(LogHCT2026, Warning, TEXT("Start HCTPawn"));
 	
-	if (DefaultMaterial)
-	{
-		PawnMesh->SetMaterial(0, DefaultMaterial);
-	}
 	
 }
 
@@ -51,28 +53,6 @@ void AHCTPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-// Interface function: toggles material
-void AHCTPawn::ChangeMaterial_Implementation()
-{
-	if (!PawnMesh) return;
 
-	if (bUsingAlternateMaterial)
-	{
-		if (DefaultMaterial)
-		{
-			PawnMesh->SetMaterial(0, DefaultMaterial);
-		}
-	}
-	else
-	{
-		if (AlternateMaterial)
-		{
-			PawnMesh->SetMaterial(0, AlternateMaterial);
-		}
-	}
 
-	bUsingAlternateMaterial = !bUsingAlternateMaterial;
-
-	UE_LOG(LogHCT2026, Warning, TEXT("%s changed material"), *GetName());
-}
 

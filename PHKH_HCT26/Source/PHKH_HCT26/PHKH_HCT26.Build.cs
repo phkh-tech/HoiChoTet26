@@ -17,6 +17,7 @@ public class PHKH_HCT26 : ModuleRules
 			"EnhancedInput", 
 			"UMG",
 			"GameplayTags",
+			"Niagara"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

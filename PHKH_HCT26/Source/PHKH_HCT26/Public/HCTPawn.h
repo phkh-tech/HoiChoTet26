@@ -9,7 +9,7 @@
 #include "HCTPossessableInterface.h" 
 #include "HCTPawn.generated.h"
 
-
+class USphereComponent;
 class UInputAction;
 class UFloatingPawnMovement;
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Possession);
@@ -30,13 +30,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USphereComponent* CollisionComponent;
 	
 	UPROPERTY(VisibleAnywhere)
 	UFloatingPawnMovement* MovementComponent;
 	
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* PawnMesh;
 	
 	// Materials
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
@@ -56,7 +55,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
-
-	// Interface implementation
-	virtual void ChangeMaterial_Implementation() override;
 };

@@ -1,23 +1,21 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Interaction/HCTButtonBase.h"
 #include "Components/BoxComponent.h"
+#include "HCTPawn.h"
+#include "GameFramework/Character.h"
+#include "Engine/Engine.h"
 
-
-// Sets default values
 AHCTButtonBase::AHCTButtonBase()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	// Firstly, create root scene component so that we can still change the box collision relative position
+
+	// Create root
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
-	SetRootComponent(SceneRoot); // or RootComponent = SceneRoot;
-	
-	// Create, parent, and configure box collision component
+	SetRootComponent(SceneRoot);
+
+	// Create and configure box collision
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	CollisionComponent->SetupAttachment(RootComponent);
-	CollisionComponent->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f));
+	CollisionComponent->SetBoxExtent(FVector(50.f, 50.f, 50.f));
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	CollisionComponent->SetCollisionObjectType(ECC_WorldDynamic);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -25,37 +23,78 @@ AHCTButtonBase::AHCTButtonBase()
 	CollisionComponent->SetGenerateOverlapEvents(true);
 }
 
-// Called when the game starts or when spawned
 void AHCTButtonBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	// Bind overlap events
-	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AHCTButtonBase::OnOverlapBegin);
-	CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &AHCTButtonBase::OnOverlapEnd);
+
+	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AHCTButtonBase::OnBeginOverlap);
+	CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &AHCTButtonBase::OnEndOverlap);
 }
 
-void AHCTButtonBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (OtherActor && OtherActor != this)
-	{
-		EnterStore.Broadcast(OtherActor);
-	}
-}
-
-void AHCTButtonBase::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor && OtherActor != this)
-	{
-		ExitStore.Broadcast(OtherActor);
-	}
-}
-
-// Called every frame
 void AHCTButtonBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
+void AHCTButtonBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor)
+		return;
+
+	bool bIsValidOverlap = false;
+
+	// Check if the overlapping actor is your custom HCTPawn
+	if (Cast<AHCTPawn>(OtherActor))
+	{
+		bIsValidOverlap = true;
+	}
+
+	// Or if it’s a Character (e.g., BP_ThirdPersonCharacter)
+	else if (Cast<ACharacter>(OtherActor))
+	{
+		bIsValidOverlap = true;
+	}
+
+	if (bIsValidOverlap)
+	{
+		// Display message on screen (like Print String)
+		if (GEngine)
+		{
+			FString Msg = FString::Printf(TEXT("Hello"));
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, Msg);
+		}
+
+		// Trigger Blueprint delegate
+		EnterShop.Broadcast(OtherActor);
+	}
+}
+
+void AHCTButtonBase::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor)
+		return;
+
+	bool bIsValidOverlap = false;
+
+	if (Cast<AHCTPawn>(OtherActor))
+	{
+		bIsValidOverlap = true;
+	}
+	else if (Cast<ACharacter>(OtherActor))
+	{
+		bIsValidOverlap = true;
+	}
+
+	if (bIsValidOverlap)
+	{
+		if (GEngine)
+		{
+			FString Msg = FString::Printf(TEXT("Goodbye"));
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, Msg);
+		}
+
+		ExitShop.Broadcast(OtherActor);
+	}
+}
