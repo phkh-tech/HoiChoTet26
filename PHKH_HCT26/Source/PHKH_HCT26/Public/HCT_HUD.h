@@ -14,6 +14,7 @@ class PHKH_HCT26_API AHCT_HUD : public AHUD
 {
 	GENERATED_BODY()
   
+	AHCT_HUD();
 	
 public:
 	virtual void BeginPlay() override;
@@ -22,7 +23,7 @@ public:
 	TSubclassOf<UUserWidget> WBP_HCT26;
 
 protected:
-
+		
 	UPROPERTY()
 	UUserWidget* HUDWidgetInstance;
 };

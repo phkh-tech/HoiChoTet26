@@ -10,50 +10,9 @@
 #include "HCTPawn.h"
 #include "HCTPossessableInterface.h"
 
+
 AHCTPlayerController::AHCTPlayerController()
 {
-}
-
-void AHCTPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-	check(GEngine != nullptr);
-	
-	UE_LOG(LogHCT2026, Warning, TEXT("Start HCTPlayerController"));
-	
-	// Add input mapping context
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
-	{
-		if (PossessMappingContext)
-		{
-			Subsystem->AddMappingContext(PossessMappingContext, 0);
-		}
-	}
-
-	// Cache all pawns with the "Possession" tag
-	FGameplayTag PossessionTag = FGameplayTag::RequestGameplayTag(FName("Possession"));
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHCTPawn::StaticClass(), FoundActors);
-
-	for (AActor* Actor : FoundActors)
-	{
-		if (AHCTPawn* HCTPawn = Cast<AHCTPawn>(Actor))
-		{
-			if (HCTPawn->GamePlayTag.HasTag(PossessionTag))
-			{
-				CachedPossessionPawns.Add(HCTPawn);
-				UE_LOG(LogHCT2026, Warning, TEXT("Found pawn with Possession tag: %s"), *HCTPawn->GetName());
-			}
-		}
-	}
-
-	// Possess the first pawn if available
-	if (CachedPossessionPawns.Num() > 0 && CachedPossessionPawns[0].IsValid())
-	{
-		Possess(CachedPossessionPawns[0].Get());
-		UE_LOG(LogHCT2026, Warning, TEXT("Initially possessed pawn: %s"), *CachedPossessionPawns[0]->GetName());
-	}
 }
 
 void AHCTPlayerController::SetupInputComponent()
@@ -110,6 +69,48 @@ void AHCTPlayerController::PossessNextPawnWithTag(const FGameplayTag& TagToFind)
 	else
 	{
 		UE_LOG(LogHCT2026, Warning, TEXT("Invalid pawn reference in cache."));
+	}
+}
+
+void AHCTPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	check(GEngine != nullptr);
+	
+	UE_LOG(LogHCT2026, Warning, TEXT("Start HCTPlayerController"));
+	
+	// Add input mapping context
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		if (PossessMappingContext)
+		{
+			Subsystem->AddMappingContext(PossessMappingContext, 0);
+		}
+	}
+
+	// Cache all pawns with the "Possession" tag
+	const FGameplayTag PossessionTag = FGameplayTag::RequestGameplayTag(FName("Possession"));
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHCTPawn::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (AHCTPawn* HCTPawn = Cast<AHCTPawn>(Actor))
+		{
+			if (HCTPawn->GamePlayTag.HasTag(PossessionTag))
+			{
+				CachedPossessionPawns.Add(HCTPawn);
+				UE_LOG(LogHCT2026, Warning, TEXT("Found pawn with Possession tag: %s"), *HCTPawn->GetName());
+			}
+		}
+	}
+
+	// Possess the first pawn if available
+	if (CachedPossessionPawns.Num() > 0 && CachedPossessionPawns[0].IsValid())
+	{
+		Possess(CachedPossessionPawns[0].Get());
+		UE_LOG(LogHCT2026, Warning, TEXT("Initially possessed pawn: %s"), *CachedPossessionPawns[0]->GetName());
 	}
 }
 

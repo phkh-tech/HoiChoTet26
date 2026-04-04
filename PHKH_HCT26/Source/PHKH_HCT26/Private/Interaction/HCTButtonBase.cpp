@@ -39,33 +39,8 @@ void AHCTButtonBase::Tick(float DeltaTime)
 void AHCTButtonBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!OtherActor)
-		return;
-
-	bool bIsValidOverlap = false;
-
-	// Check if the overlapping actor is your custom HCTPawn
-	if (Cast<AHCTPawn>(OtherActor))
+	if (OtherActor && OtherActor != this)
 	{
-		bIsValidOverlap = true;
-	}
-
-	// Or if it’s a Character (e.g., BP_ThirdPersonCharacter)
-	else if (Cast<ACharacter>(OtherActor))
-	{
-		bIsValidOverlap = true;
-	}
-
-	if (bIsValidOverlap)
-	{
-		// Display message on screen (like Print String)
-		if (GEngine)
-		{
-			FString Msg = FString::Printf(TEXT("Hello"));
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, Msg);
-		}
-
-		// Trigger Blueprint delegate
 		EnterShop.Broadcast(OtherActor);
 	}
 }
@@ -73,28 +48,8 @@ void AHCTButtonBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 void AHCTButtonBase::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (!OtherActor)
-		return;
-
-	bool bIsValidOverlap = false;
-
-	if (Cast<AHCTPawn>(OtherActor))
+	if (OtherActor && OtherActor != this)
 	{
-		bIsValidOverlap = true;
-	}
-	else if (Cast<ACharacter>(OtherActor))
-	{
-		bIsValidOverlap = true;
-	}
-
-	if (bIsValidOverlap)
-	{
-		if (GEngine)
-		{
-			FString Msg = FString::Printf(TEXT("Goodbye"));
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, Msg);
-		}
-
 		ExitShop.Broadcast(OtherActor);
 	}
 }

@@ -17,10 +17,10 @@ class PHKH_HCT26_API AHCTButtonBase : public AActor
 public:
 	AHCTButtonBase();
 
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, Category="Button Events")
+	UPROPERTY(BlueprintAssignable, Category="Button Events")
 	FSignatureKhiBatDauOverlap EnterShop;
 
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, Category="Button Events")
+	UPROPERTY(BlueprintAssignable, Category="Button Events")
 	FSignatureKhiHetOverlap ExitShop;
 
 protected:
@@ -37,8 +37,7 @@ public:
 
 	UFUNCTION()
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	                    const FHitResult& SweepResult);
+	                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

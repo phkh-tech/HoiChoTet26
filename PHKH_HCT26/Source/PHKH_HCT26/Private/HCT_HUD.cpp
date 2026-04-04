@@ -5,6 +5,10 @@
 #include "Blueprint/UserWidget.h" 
 #include "PHKH_HCT26/PHKH_HCT26.h"
 
+AHCT_HUD::AHCT_HUD()
+{
+}
+
 void AHCT_HUD::BeginPlay()
 {
 	Super::BeginPlay();
