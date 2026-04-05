@@ -1,28 +1,50 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "InputActionValue.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "PawnBase.generated.h"
+
+class UArrowComponent;
+class ABallBase;
+class UStaticMeshComponent;
 
 UCLASS()
 class PHKH_HCT26_API APawnBase : public APawn
 {
 	GENERATED_BODY()
-
-public:
-	// Sets default values for this pawn's properties
+    
+public: 
+	virtual void Tick(float DeltaTime) override;
+    
 	APawnBase();
 
+	void Move(const FInputActionValue& Value);
+	void Fire(const FInputActionValue& Value);
+    
+	UFUNCTION(BlueprintCallable, Category = "Game Events")
+	void NewBall();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float Speed = 450.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	UFloatingPawnMovement* MovementComponent;
+
 protected:
-	// Called when the game starts or when spawned
+    
 	virtual void BeginPlay() override;
+    
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* PlayerPaddle;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UArrowComponent* Arrow;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ball")
+	TSubclassOf<ABallBase> BallClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Ball")
+	ABallBase* Ball;
 };

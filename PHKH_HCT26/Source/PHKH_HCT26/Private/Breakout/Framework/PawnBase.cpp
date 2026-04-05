@@ -1,32 +1,97 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Breakout/Framework/PawnBase.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
+#include "Components/ArrowComponent.h"
+#include "Engine/World.h"
+#include "Breakout/Actor/BallBase.h"
 
-
-// Sets default values
 APawnBase::APawnBase()
 {
-	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	PlayerPaddle = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlayerPaddle"));
+	RootComponent = PlayerPaddle;
+
+	PlayerPaddle->SetSimulatePhysics(true);
+
+	PlayerPaddle->BodyInstance.bLockRotation = true;
+	PlayerPaddle->BodyInstance.bLockZTranslation = true;
+	PlayerPaddle->BodyInstance.bLockYTranslation = true;
+
+	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
+	Arrow->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void APawnBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, 
+	&APawnBase::NewBall, 0.1f, false);
 }
 
-// Called every frame
 void APawnBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
-void APawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void APawnBase::Move(const FInputActionValue& Value)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	float AxisValue = Value.Get<float>();
+
+	if (PlayerPaddle && PlayerPaddle->IsSimulatingPhysics())
+	{
+		PlayerPaddle->WakeAllRigidBodies();
+		
+		float ImpulseForce = AxisValue * Speed;
+		FVector ImpulseVector(ImpulseForce, 0.f, 0.f);
+
+		PlayerPaddle->AddImpulse(ImpulseVector, NAME_None, true);
+		return;
+	}
+
+	if (MovementComponent)
+	{
+		AddMovementInput(FVector::RightVector, AxisValue);
+	}
 }
 
+void APawnBase::NewBall()
+{
+	if (!BallClass)
+	{
+		return;
+	}
+
+	if (!Arrow)
+	{
+		return;
+	}
+	
+	FTransform SpawnTransform = Arrow->GetComponentTransform();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	ABallBase* SpawnedBall = GetWorld()->SpawnActor<ABallBase>(BallClass, SpawnTransform, SpawnParams);
+
+	if (SpawnedBall)
+	{
+		Ball = SpawnedBall;
+		
+		Ball->PlayerPaddle = this; 
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Error, TEXT("PawnBase: Failed to spawn Ball!"));
+	}
+}
+
+void APawnBase::Fire(const FInputActionValue& Value)
+{
+	if (Value.Get<bool>() && Ball && !Ball->IsActive)
+	{
+		Ball->LaunchBall();
+	}
+}
