@@ -38,9 +38,14 @@ void APlayerControllerBase::OnPossess(APawn* InPawn)
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
-		Subsystem->ClearAllMappings();
-		if (MoveMappingContext) Subsystem->AddMappingContext(MoveMappingContext, 0);
-		if (FireMappingContext) Subsystem->AddMappingContext(FireMappingContext, 0);
+		if (MoveMappingContext) 
+		{
+			Subsystem->AddMappingContext(MoveMappingContext, 0);
+		}
+		if (FireMappingContext) 
+		{
+			Subsystem->AddMappingContext(FireMappingContext, 0);
+		}
 	}
 }
 

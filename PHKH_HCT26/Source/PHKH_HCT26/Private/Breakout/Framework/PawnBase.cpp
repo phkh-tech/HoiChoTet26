@@ -20,6 +20,9 @@ APawnBase::APawnBase()
 
 	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 	Arrow->SetupAttachment(RootComponent);
+	
+	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
+	MovementComponent->UpdatedComponent = PlayerPaddle;
 }
 
 void APawnBase::BeginPlay()

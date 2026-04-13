@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PHKH_HCT26/Public/HCTPawn.h"
+#include "PHKH_HCT26/Public/Framework/HCTPawn.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PHKH_HCT26/PHKH_HCT26.h"
 #include "Components/SphereComponent.h"

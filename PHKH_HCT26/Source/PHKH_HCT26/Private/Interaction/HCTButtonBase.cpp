@@ -1,6 +1,6 @@
 #include "Interaction/HCTButtonBase.h"
 #include "Components/BoxComponent.h"
-#include "HCTPawn.h"
+#include "Framework/HCTPawn.h"
 #include "GameFramework/Character.h"
 #include "Engine/Engine.h"
 

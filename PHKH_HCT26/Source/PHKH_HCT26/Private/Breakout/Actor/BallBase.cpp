@@ -52,7 +52,7 @@ void ABallBase::LaunchBall()
     {
         IsActive = true;
 
-        FVector LaunchVector(-1500.f, 1500.f, 0.f);
+        FVector LaunchVector(-360.f, 360.f, 0.f);
         PingBall->AddImpulse(LaunchVector, NAME_None, true);
     }
 }

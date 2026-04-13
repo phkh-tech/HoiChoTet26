@@ -2,9 +2,9 @@
 
 
 
-#include "PHKH_HCT26/Public/HCTGameMode.h"
-#include "HCTPawn.h"
-#include "HCTPlayerController.h"
+#include "PHKH_HCT26/Public/Framework/HCTGameMode.h"
+#include "Framework/HCTPawn.h"
+#include "Framework/HCTPlayerController.h"
 #include "PHKH_HCT26/PHKH_HCT26.h"
 
 AHCTGameMode::AHCTGameMode()

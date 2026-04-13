@@ -24,9 +24,7 @@ protected:
 	
 	void Move(const FInputActionValue& Value);
 	void Fire(const FInputActionValue& Value);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UFloatingPawnMovement* MovementComponent;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* MoveAction;
