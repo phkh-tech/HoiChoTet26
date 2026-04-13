@@ -1,14 +1,14 @@
 #include "Breakout/Framework/MyGameModeBase.h"
 #include "Breakout/Framework/PawnBase.h"
-#include "Breakout/Framework/PlayerControllerBase.h"
 #include "Breakout/Framework/GameInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Breakout/Widget/WidgetBase.h"
+#include "Framework/HCTPlayerController.h"
 
 AMyGameModeBase::AMyGameModeBase()
 {
     DefaultPawnClass = APawnBase::StaticClass();
-    PlayerControllerClass = APlayerControllerBase::StaticClass();
+    PlayerControllerClass = AHCTPlayerController::StaticClass();
 
     AsPingGameInstance = nullptr;
     HUDWidget = nullptr;
@@ -22,7 +22,6 @@ void AMyGameModeBase::BeginPlay()
     
     if (AsPingGameInstance)
     {
-        // Ensure lives never start at 0
         if (AsPingGameInstance->Lifes <= 0) 
         {
             AsPingGameInstance->Lifes = 3;
@@ -84,15 +83,7 @@ void AMyGameModeBase::LifeLoss()
     {
         GameOver();
     }
-    else
-    {
-        if (AsPingGameInstance)
-        {
-            AsPingGameInstance->Lifes = this->Lifes;
-        }
-       
-        UGameplayStatics::OpenLevel(GetWorld(), FName("Sandbox"));
-    }
+    //else{if (AsPingGameInstance){AsPingGameInstance->Lifes = this->Lifes;}UGameplayStatics::OpenLevel(GetWorld(), FName("Sandbox"));}
 }
 
 void AMyGameModeBase::GameOver()
@@ -137,7 +128,5 @@ void AMyGameModeBase::ResetGame()
         PC->SetInputMode(InputMode);
         PC->FlushPressedKeys();
     }
-    
-    // 3. Now reload
     UGameplayStatics::OpenLevel(GetWorld(), FName("Sandbox"));
 }

@@ -51,20 +51,16 @@ void ABaseBlock::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Other
 			if (MyGameMode)
 			{
 				MyGameMode->UpdateScore(1);
-
-				// Get all blocks currently in the level
+				
 				TArray<AActor*> FoundBlocks;
 				UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseBlock::StaticClass(), FoundBlocks);
-
-				// IMPORTANT: If count is 1, the ONLY block left is the one we just hit.
+				
 				if (FoundBlocks.Num() == 1 && FoundBlocks[0] == this)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("WINNING CONDITION TRIGGERED!"));
 					MyGameMode->WinningCondition();
 				}
 			}
-
-			// Now it is safe to destroy
 			this->Destroy();
 		}
 	}

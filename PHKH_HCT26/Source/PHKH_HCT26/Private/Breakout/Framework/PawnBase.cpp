@@ -28,9 +28,30 @@ APawnBase::APawnBase()
 void APawnBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (PlayerPaddle)
+	{
+		PlayerPaddle->OnComponentHit.AddDynamic(this, &APawnBase::OnComponentHit);
+	}
+	
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, 
+		
 	&APawnBase::NewBall, 0.1f, false);
+}
+
+void APawnBase::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp,FVector NormalImpulse, const FHitResult& Hit)
+{
+	ABallBase* HitBall = Cast<ABallBase>(OtherActor);
+	
+	if (HitBall && HitBall->PingBall)
+	{
+		FVector CurrentVelocity = HitBall->PingBall->GetPhysicsLinearVelocity();
+		FVector NewVelocity = CurrentVelocity.GetSafeNormal() * HitBall->BallSpeed;
+
+		HitBall->PingBall->SetPhysicsLinearVelocity(NewVelocity);
+	}
 }
 
 void APawnBase::Tick(float DeltaTime)
@@ -82,7 +103,7 @@ void APawnBase::NewBall()
 	if (SpawnedBall)
 	{
 		Ball = SpawnedBall;
-		
+		Ball->IsActive = false;
 		Ball->PlayerPaddle = this; 
 	}
 	else 

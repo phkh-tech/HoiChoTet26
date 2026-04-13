@@ -25,6 +25,10 @@ void ABallBase::BeginPlay()
 void ABallBase::Destroyed()
 {
     Super::Destroyed();
+    if (PlayerPaddle && !GetWorld()->bIsTearingDown)
+    {
+         PlayerPaddle->NewBall();
+    }
 }
 
 void ABallBase::Tick(float DeltaTime)
@@ -52,7 +56,7 @@ void ABallBase::LaunchBall()
     {
         IsActive = true;
 
-        FVector LaunchVector(-360.f, 360.f, 0.f);
+        FVector LaunchVector(-1000.f, 1000.f, 0.f);
         PingBall->AddImpulse(LaunchVector, NAME_None, true);
     }
 }
@@ -89,6 +93,6 @@ void ABallBase::HandleBallDeath()
 
         GM->LifeLoss();
     }
-
     Destroy();
+    
 }
