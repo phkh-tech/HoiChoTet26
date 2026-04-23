@@ -25,15 +25,22 @@ public:
     virtual void PossessNextPawnWithTag(const FGameplayTag& TagToFind);
 
 protected:
+    // Input Handlers
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
+    void EjectMiniGame();
     void HandlePossessAction(const FInputActionValue& Value);
-    void HandleChangeMaterial(const FInputActionValue& Value);
-    
     void PaddleMove(const FInputActionValue& Value);
     void PaddleFire(const FInputActionValue& Value);
 
-    /** Input Actions */
+    // Helpers
+    void AddDefaultInputMappingCtx(bool Clear=false) const;
+    
+    // Reference to the original pawn to repossess after ejecting
+    UPROPERTY()
+    AHCTPawn* OriginalPawn;
+
+    // Input Actions
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input|General")
     UInputAction* MoveAction;
 
@@ -42,9 +49,9 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input|General")
     UInputAction* PossessAction;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input|General")
-    UInputAction* ChangeMaterial;
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|General")
+    UInputAction* EjectGameAction;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input|Paddle")
     UInputAction* PaddleMoveAction;
@@ -52,7 +59,7 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input|Paddle")
     UInputAction* PaddleFireAction;
 
-    /** Mapping Contexts */
+    // Mapping Contexts
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input|Contexts")
     UInputMappingContext* DefaultMappingContext;
 

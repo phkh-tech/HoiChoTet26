@@ -31,10 +31,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	UFloatingPawnMovement* MovementComponent;
-	
-	UFUNCTION()
-	void OnComponentHit( UPrimitiveComponent* HitComponent, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, FVector NormalImpulse,const FHitResult& Hit);
 
 protected:
     

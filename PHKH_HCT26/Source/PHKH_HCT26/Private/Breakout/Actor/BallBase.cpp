@@ -1,8 +1,10 @@
 #include "Breakout/Actor/BallBase.h"
 #include "Components/ArrowComponent.h"
 #include "Breakout/Framework/PawnBase.h"
-#include "Breakout/Framework/GameInstanceBase.h"
+#include "MiniGameManager/BreakouBallManager.h"
 #include "Breakout/Framework/MyGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+
 
 ABallBase::ABallBase()
 {
@@ -25,10 +27,6 @@ void ABallBase::BeginPlay()
 void ABallBase::Destroyed()
 {
     Super::Destroyed();
-    if (PlayerPaddle && !GetWorld()->bIsTearingDown)
-    {
-         PlayerPaddle->NewBall();
-    }
 }
 
 void ABallBase::Tick(float DeltaTime)
@@ -51,7 +49,7 @@ void ABallBase::UpdatePosition()
 }
 
 void ABallBase::LaunchBall()
-{
+{ 
     if (!IsActive && PingBall)
     {
         IsActive = true;
@@ -81,6 +79,7 @@ void ABallBase::VelocityAndAngle()
 
 void ABallBase::HandleBallDeath()
 {
+    /*
     AMyGameModeBase* GM = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
     UGameInstanceBase* GI = Cast<UGameInstanceBase>(GetGameInstance());
 
@@ -93,6 +92,14 @@ void ABallBase::HandleBallDeath()
 
         GM->LifeLoss();
     }
-    Destroy();
+    */
     
+    ABreakouBallManager* Manager = Cast<ABreakouBallManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ABreakouBallManager::StaticClass()));
+
+    if (Manager)
+    {
+        Manager->LifeLost();
+    }
+
+    Destroy();
 }

@@ -1,6 +1,6 @@
 #include "Breakout/Framework/MyGameModeBase.h"
 #include "Breakout/Framework/PawnBase.h"
-#include "Breakout/Framework/GameInstanceBase.h"
+#include "Framework/GameInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Breakout/Widget/WidgetBase.h"
 #include "Framework/HCTPlayerController.h"
@@ -10,7 +10,7 @@ AMyGameModeBase::AMyGameModeBase()
     DefaultPawnClass = APawnBase::StaticClass();
     PlayerControllerClass = AHCTPlayerController::StaticClass();
 
-    AsPingGameInstance = nullptr;
+    BallGameInstance = nullptr;
     HUDWidget = nullptr;
 }
 
@@ -18,15 +18,15 @@ void AMyGameModeBase::BeginPlay()
 {
     Super::BeginPlay();
 
-    AsPingGameInstance = Cast<UGameInstanceBase>(GetGameInstance());
+    BallGameInstance = Cast<UGameInstanceBase>(GetGameInstance());
     
-    if (AsPingGameInstance)
+    if (BallGameInstance)
     {
-        if (AsPingGameInstance->Lifes <= 0) 
+        if (BallGameInstance->Lifes <= 0) 
         {
-            AsPingGameInstance->Lifes = 3;
+            BallGameInstance->Lifes = 3;
         }
-        this->Lifes = AsPingGameInstance->Lifes;
+        this->Lifes = BallGameInstance->Lifes;
     }
 
     if (HUDWidgetClass) 
@@ -39,9 +39,9 @@ void AMyGameModeBase::BeginPlay()
             HUDWidget->UpdateLivesDisplay(this->Lifes);
             HUDWidget->UpdateHighScoresDisplay(0);
             
-            if (AsPingGameInstance)
+            if (BallGameInstance)
             {
-                HUDWidget->UpdateWinScoresDisplay(AsPingGameInstance->HighScores);
+                HUDWidget->UpdateWinScoresDisplay(BallGameInstance->HighScores);
             }
         }
     }
@@ -52,14 +52,14 @@ void AMyGameModeBase::UpdateScore(int32 Score)
     CurrentScore += Score;
     if (CurrentScore < 0) CurrentScore = 0;
 
-    if (AsPingGameInstance)
+    if (BallGameInstance)
     {
-        if (CurrentScore > AsPingGameInstance->HighScores)
+        if (CurrentScore > BallGameInstance->HighScores)
         {
-            AsPingGameInstance->HighScores = CurrentScore;
+            BallGameInstance->HighScores = CurrentScore;
             if (HUDWidget)
             {
-                HUDWidget->UpdateWinScoresDisplay(AsPingGameInstance->HighScores);
+                HUDWidget->UpdateWinScoresDisplay(BallGameInstance->HighScores);
             }
         }
     }
@@ -71,9 +71,9 @@ void AMyGameModeBase::UpdateScore(int32 Score)
 
 void AMyGameModeBase::UpdateHighScores()
 {
-    if (AsPingGameInstance && CurrentScore > AsPingGameInstance->HighScores)
+    if (BallGameInstance && CurrentScore > BallGameInstance->HighScores)
     {
-        AsPingGameInstance->HighScores = CurrentScore;
+        BallGameInstance->HighScores = CurrentScore;
     }
 }
 
@@ -83,7 +83,13 @@ void AMyGameModeBase::LifeLoss()
     {
         GameOver();
     }
-    //else{if (AsPingGameInstance){AsPingGameInstance->Lifes = this->Lifes;}UGameplayStatics::OpenLevel(GetWorld(), FName("Sandbox"));}
+     else{
+        if (BallGameInstance)
+       {
+           BallGameInstance->Lifes = this->Lifes;
+       }
+        UGameplayStatics::OpenLevel(GetWorld(), FName("Sandbox"));
+   }
 }
 
 void AMyGameModeBase::GameOver()
@@ -112,10 +118,10 @@ void AMyGameModeBase::GameOver()
 
 void AMyGameModeBase::ResetGame()
 {
-    if (AsPingGameInstance)
+    if (BallGameInstance)
     {
-        AsPingGameInstance->Lifes = 3;      
-        AsPingGameInstance->HighScores = 0;
+        BallGameInstance->Lifes = 3;      
+        BallGameInstance->HighScores = 0;
     }
     
     if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))

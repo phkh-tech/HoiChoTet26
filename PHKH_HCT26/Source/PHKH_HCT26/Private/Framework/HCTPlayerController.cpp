@@ -4,21 +4,25 @@
 #include "Kismet/GameplayStatics.h"
 #include "Framework/HCTPawn.h"
 #include "Breakout/Framework/PawnBase.h" 
-#include "HCTPossessableInterface.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
 
-AHCTPlayerController::AHCTPlayerController() {}
+
+AHCTPlayerController::AHCTPlayerController()
+{
+    OriginalPawn = nullptr;
+}
 
 void AHCTPlayerController::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+    
+    AddDefaultInputMappingCtx(true);
+    
+    if (!OriginalPawn)
     {
-        if (DefaultMappingContext)
-        {
-            Subsystem->AddMappingContext(DefaultMappingContext, 0);
-        }
-    }
+        OriginalPawn = Cast<AHCTPawn>(UGameplayStatics::GetActorOfClass(GetWorld(), AHCTPawn::StaticClass()));
+    }    
     
     const FGameplayTag PossessionTag = FGameplayTag::RequestGameplayTag(FName("Possession"));
     TArray<AActor*> FoundActors;
@@ -31,6 +35,11 @@ void AHCTPlayerController::BeginPlay()
             if (HCTPawn->GamePlayTag.HasTag(PossessionTag))
             {
                 CachedPossessionPawns.Add(HCTPawn);
+                if (!OriginalPawn)
+                {
+                    OriginalPawn = HCTPawn;
+                    UE_LOG(LogTemp, Warning, TEXT("BeginPlay: OriginalPawn set to %s"), *OriginalPawn->GetName());
+                }
             }
         }
     }
@@ -51,8 +60,7 @@ void AHCTPlayerController::SetupInputComponent()
         if (MoveAction) EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AHCTPlayerController::Move);
         if (LookAction) EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHCTPlayerController::Look);
         if (PossessAction) EnhancedInput->BindAction(PossessAction, ETriggerEvent::Started, this, &AHCTPlayerController::HandlePossessAction);
-        if (ChangeMaterial) EnhancedInput->BindAction(ChangeMaterial, ETriggerEvent::Started, this, &AHCTPlayerController::HandleChangeMaterial);
-
+        if (EjectGameAction) EnhancedInput->BindAction(EjectGameAction, ETriggerEvent::Started, this, &AHCTPlayerController::EjectMiniGame);
         // Paddle Specific Actions
         if (PaddleMoveAction) EnhancedInput->BindAction(PaddleMoveAction, ETriggerEvent::Triggered, this, &AHCTPlayerController::PaddleMove);
         if (PaddleFireAction) EnhancedInput->BindAction(PaddleFireAction, ETriggerEvent::Triggered, this, &AHCTPlayerController::PaddleFire);
@@ -62,12 +70,22 @@ void AHCTPlayerController::SetupInputComponent()
 void AHCTPlayerController::OnPossess(APawn* InPawn)
 {
     Super::OnPossess(InPawn);
+    
+    if (InPawn && InPawn->IsA(APawnBase::StaticClass()))
+    {
+        APawn* CurrentPawn = GetPawn();
+        if (CurrentPawn && CurrentPawn->IsA(AHCTPawn::StaticClass()))
+        {
+            OriginalPawn = Cast<AHCTPawn>(CurrentPawn);
+        }
+    }
+    
     FInputModeGameOnly InputMode;
     SetInputMode(InputMode);
     
     if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
     {
-        if (InPawn && InPawn->IsA(APawnBase::StaticClass())) // Assuming APawnBase is the Paddle
+        if (InPawn && InPawn->IsA(APawnBase::StaticClass()))
         {
             if (PaddleMappingContext) Subsystem->AddMappingContext(PaddleMappingContext, 1);
             if (PaddleFireContext) Subsystem->AddMappingContext(PaddleFireContext, 1);
@@ -136,11 +154,43 @@ void AHCTPlayerController::Look(const FInputActionValue& Value)
     AddPitchInput(LookAxis.Y);
 }
 
-void AHCTPlayerController::HandleChangeMaterial(const FInputActionValue& Value)
+void AHCTPlayerController::EjectMiniGame()
 {
-    APawn* CurrentPawn = GetPawn();
-    if (CurrentPawn && CurrentPawn->GetClass()->ImplementsInterface(UHCTPossessableInterface::StaticClass()))
+    UE_LOG(LogTemp, Warning, TEXT("Eject Action Triggered!"));
+
+    if (!OriginalPawn)
     {
-        IHCTPossessableInterface::Execute_ChangeMaterial(CurrentPawn);
+        OriginalPawn = Cast<AHCTPawn>(UGameplayStatics::GetActorOfClass(GetWorld(), AHCTPawn::StaticClass()));
+    }
+
+    if (!OriginalPawn || GetPawn() == OriginalPawn)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Eject Cancelled: No OriginalPawn found in world."));
+        return;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("Ejecting to: %s"), *OriginalPawn->GetName());
+
+    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+    {
+        if (PaddleMappingContext) Subsystem->RemoveMappingContext(PaddleMappingContext);
+        if (PaddleFireContext)    Subsystem->RemoveMappingContext(PaddleFireContext);
+    }
+    
+    UnPossess();
+    Possess(OriginalPawn);
+    SetViewTargetWithBlend(OriginalPawn, 0.5f);
+}
+
+void AHCTPlayerController::AddDefaultInputMappingCtx(bool Clear) const
+{
+    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+    {
+        if (Clear) Subsystem->ClearAllMappings();
+
+        if (DefaultMappingContext)
+        {
+            Subsystem->AddMappingContext(DefaultMappingContext, 0);
+        }
     }
 }

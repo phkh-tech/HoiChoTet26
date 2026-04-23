@@ -2,6 +2,7 @@
 #include "Breakout/Actor/BallBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Breakout/Framework/MyGameModeBase.h"
+#include "MiniGameManager/BreakouBallManager.h"
 
 ABaseBlock::ABaseBlock()
 {
@@ -46,7 +47,7 @@ void ABaseBlock::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Other
 
 			HitBall->PingBall->SetPhysicsLinearVelocity(NewVelocity);
 
-			AMyGameModeBase* MyGameMode = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
+			/*AMyGameModeBase* MyGameMode = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode());
 
 			if (MyGameMode)
 			{
@@ -60,6 +61,13 @@ void ABaseBlock::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Other
 					UE_LOG(LogTemp, Warning, TEXT("WINNING CONDITION TRIGGERED!"));
 					MyGameMode->WinningCondition();
 				}
+			}*/
+			
+			ABreakouBallManager* Manager = Cast<ABreakouBallManager>(UGameplayStatics::GetActorOfClass(GetWorld(), 
+				ABreakouBallManager::StaticClass()));
+			if (Manager)
+			{
+				Manager->UpdateScore(1);
 			}
 			this->Destroy();
 		}

@@ -28,7 +28,7 @@ public:
 	void HandleBallDeath();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GameStats")
-	double BallSpeed = 1000.0f;
+	double BallSpeed = 1800.0f;
 
 	UPROPERTY(BlueprintReadWrite, Category = "GameStats")
 	bool IsActive = false;
